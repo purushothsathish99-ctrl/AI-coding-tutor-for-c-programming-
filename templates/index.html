@@ -1,0 +1,236 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Hero Welcome Banner -->
+<div class="card" style="background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(11, 28, 62, 0.95)); border-color: rgba(56, 189, 248, 0.25); margin-bottom: 24px; position: relative; overflow: hidden;">
+    <div style="position: absolute; right: -20px; bottom: -30px; font-size: 160px; color: rgba(56, 189, 248, 0.03); pointer-events: none;">
+        <i class="fas fa-microchip"></i>
+    </div>
+    <div class="card-body" style="padding: 32px;">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+            <span class="badge badge-cyan"><i class="fas fa-graduation-cap"></i> CSE 1st Year Learning Platform</span>
+            <span class="badge badge-emerald"><i class="fas fa-shield-alt"></i> Safe GCC Sandbox</span>
+        </div>
+        <h1 style="font-size: 28px; font-weight: 800; color: #fff; margin-bottom: 12px; letter-spacing: -0.5px;">
+            AI Coding Tutor for C Programming
+        </h1>
+        <p style="color: var(--text-secondary); max-width: 780px; font-size: 15px; line-height: 1.6; margin-bottom: 20px;">
+            Master C programming fundamentals, identify tricky pointer and syntax bugs, and learn proven debugging techniques through 
+            <strong>progressive 3-tier hints</strong> and step-by-step guidance rather than quick copy-paste answers.
+        </p>
+        <div style="display: flex; flex-wrap: wrap; gap: 12px;">
+            <a href="{{ url_for('editor') }}" class="btn btn-primary">
+                <i class="fas fa-laptop-code"></i> Launch C Code Editor
+            </a>
+            <a href="{{ url_for('analyzer') }}" class="btn btn-outline">
+                <i class="fas fa-microscope"></i> Analyze Buggy Code
+            </a>
+            <a href="{{ url_for('library') }}" class="btn btn-secondary">
+                <i class="fas fa-book-dead"></i> Browse 15 Buggy Programs
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Metrics Overview -->
+<div class="grid-4" style="margin-bottom: 24px;">
+    <div class="stat-card">
+        <div class="stat-icon cyan">
+            <i class="fas fa-code"></i>
+        </div>
+        <div>
+            <div class="stat-number">{{ stats.programs_analyzed }}</div>
+            <div class="stat-label">Programs Analyzed</div>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon emerald">
+            <i class="fas fa-bug"></i>
+        </div>
+        <div>
+            <div class="stat-number">{{ stats.bugs_identified }}</div>
+            <div class="stat-label">Bugs Identified</div>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon amber">
+            <i class="fas fa-lightbulb"></i>
+        </div>
+        <div>
+            <div class="stat-number">{{ stats.hints_unlocked }}</div>
+            <div class="stat-label">Hints Unlocked</div>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon purple">
+            <i class="fas fa-tasks"></i>
+        </div>
+        <div>
+            <div class="stat-number">{{ stats.checklist_percentage }}%</div>
+            <div class="stat-label">Checklist Progress</div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Module Navigation & System Status Grid -->
+<div class="grid-2">
+    <!-- Quick Access Modules -->
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title">
+                <i class="fas fa-th-large"></i> Quick Access Modules
+            </div>
+            <span style="font-size: 12px; color: var(--text-muted);">Self-Paced Learning</span>
+        </div>
+        <div class="card-body" style="display: flex; flex-direction: column; gap: 14px;">
+            <a href="{{ url_for('editor') }}" style="display: flex; align-items: center; gap: 14px; padding: 12px 16px; background: rgba(15,23,42,0.6); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); text-decoration: none; color: inherit; transition: all var(--transition-fast);">
+                <div style="width: 40px; height: 40px; border-radius: 8px; background: rgba(56, 189, 248, 0.15); color: var(--primary-cyan); display: flex; align-items: center; justify-content: center; font-size: 18px;">
+                    <i class="fas fa-terminal"></i>
+                </div>
+                <div style="flex: 1;">
+                    <div style="font-weight: 600; color: #fff; font-size: 14.5px;">C Code Editor & Runner</div>
+                    <div style="font-size: 12.5px; color: var(--text-secondary);">Write C code, compile with GCC flags, and view stdout diagnostics.</div>
+                </div>
+                <i class="fas fa-chevron-right" style="color: var(--text-muted); font-size: 12px;"></i>
+            </a>
+
+            <a href="{{ url_for('analyzer') }}" style="display: flex; align-items: center; gap: 14px; padding: 12px 16px; background: rgba(15,23,42,0.6); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); text-decoration: none; color: inherit; transition: all var(--transition-fast);">
+                <div style="width: 40px; height: 40px; border-radius: 8px; background: rgba(245, 158, 11, 0.15); color: var(--warning); display: flex; align-items: center; justify-content: center; font-size: 18px;">
+                    <i class="fas fa-microscope"></i>
+                </div>
+                <div style="flex: 1;">
+                    <div style="font-weight: 600; color: #fff; font-size: 14.5px;">AI Bug Analyzer (Hint-First)</div>
+                    <div style="font-size: 12.5px; color: var(--text-secondary);">Unlock 3 tiers of pedagogical hints: subtle nudge, concept, and solution.</div>
+                </div>
+                <i class="fas fa-chevron-right" style="color: var(--text-muted); font-size: 12px;"></i>
+            </a>
+
+            <a href="{{ url_for('library') }}" style="display: flex; align-items: center; gap: 14px; padding: 12px 16px; background: rgba(15,23,42,0.6); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); text-decoration: none; color: inherit; transition: all var(--transition-fast);">
+                <div style="width: 40px; height: 40px; border-radius: 8px; background: rgba(239, 68, 68, 0.15); color: var(--danger); display: flex; align-items: center; justify-content: center; font-size: 18px;">
+                    <i class="fas fa-book-dead"></i>
+                </div>
+                <div style="flex: 1;">
+                    <div style="font-weight: 600; color: #fff; font-size: 14.5px;">15 Buggy C Program Library</div>
+                    <div style="font-size: 12.5px; color: var(--text-secondary);">Explore authentic beginner bugs: off-by-one, wild pointers, and memory leaks.</div>
+                </div>
+                <i class="fas fa-chevron-right" style="color: var(--text-muted); font-size: 12px;"></i>
+            </a>
+
+            <a href="{{ url_for('quiz') }}" style="display: flex; align-items: center; gap: 14px; padding: 12px 16px; background: rgba(15,23,42,0.6); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); text-decoration: none; color: inherit; transition: all var(--transition-fast);">
+                <div style="width: 40px; height: 40px; border-radius: 8px; background: rgba(16, 185, 129, 0.15); color: var(--success); display: flex; align-items: center; justify-content: center; font-size: 18px;">
+                    <i class="fas fa-question-circle"></i>
+                </div>
+                <div style="flex: 1;">
+                    <div style="font-weight: 600; color: #fff; font-size: 14.5px;">C Concept Quiz (12 Questions)</div>
+                    <div style="font-size: 12.5px; color: var(--text-secondary);">Test knowledge on pointers, loops, conditions, and compiler warnings.</div>
+                </div>
+                <i class="fas fa-chevron-right" style="color: var(--text-muted); font-size: 12px;"></i>
+            </a>
+        </div>
+    </div>
+
+    <!-- Compiler & Sandbox Status -->
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title">
+                <i class="fas fa-server"></i> Compiler & Security Isolation
+            </div>
+            <span class="badge {% if compiler.available %}badge-emerald{% else %}badge-amber{% endif %}">
+                {% if compiler.available %}Active{% else %}Static Only{% endif %}
+            </span>
+        </div>
+        <div class="card-body">
+            <div style="margin-bottom: 16px; line-height: 1.6;">
+                <p style="color: var(--text-secondary); font-size: 13.5px; margin-bottom: 12px;">
+                    Our backend provides strict safety boundaries: native executions run in ephemeral directories with 
+                    <strong>{{ compiler.name or 'C Compiler' }}</strong>, enforced timeouts (3.0s), and capped outputs (64KB).
+                </p>
+
+                <div style="background: rgba(11, 17, 32, 0.6); padding: 14px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle); font-size: 13px;">
+                    <div style="margin-bottom: 6px;">
+                        <strong style="color: #fff;">Compiler Detected:</strong> 
+                        <span style="color: var(--primary-cyan);">{{ compiler.name or 'None on host PATH' }}</span>
+                    </div>
+                    <div style="margin-bottom: 6px;">
+                        <strong style="color: #fff;">Toolchain Version:</strong> 
+                        <span style="color: var(--text-secondary);">{{ compiler.version or 'Not Available' }}</span>
+                    </div>
+                    <div>
+                        <strong style="color: #fff;">Static Analyzer:</strong> 
+                        <span style="color: var(--success); font-weight: 600;">ACTIVE (All 15 Bug Classes Supported)</span>
+                    </div>
+                </div>
+
+                {% if not compiler.available %}
+                <div style="margin-top: 14px; background: rgba(245, 158, 11, 0.08); padding: 12px 14px; border-radius: var(--radius-sm); border-left: 3px solid var(--warning); font-size: 12.5px; color: #fde68a;">
+                    <i class="fas fa-info-circle"></i> <strong>Note:</strong> GCC is not detected in your system PATH. All static analysis, 3-tier hints, quizzes, and library programs function seamlessly. Real binary execution requires installing MinGW-w64 or GCC.
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Learning Progress Mini Bar -->
+            <div style="margin-top: 20px;">
+                <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 6px;">
+                    <span style="color: #fff; font-weight: 500;">Debugging Checklist Completion</span>
+                    <span style="color: var(--primary-cyan); font-weight: 600;">{{ stats.completed_checklist_items }} of {{ stats.total_checklist_items }} items ({{ stats.checklist_percentage }}%)</span>
+                </div>
+                <div class="progress-bar-track">
+                    <div class="progress-bar-fill" style="width: {{ stats.checklist_percentage }}%;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Analysis History -->
+<div class="card" style="margin-top: 10px;">
+    <div class="card-header">
+        <div class="card-title">
+            <i class="fas fa-history"></i> Recent Code Analyses
+        </div>
+        <a href="{{ url_for('progress') }}" class="btn btn-outline btn-sm">View Full Progress Report</a>
+    </div>
+    <div class="card-body" style="padding: 0;">
+        {% if stats.recent_analyses %}
+        <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 13px;">
+                <thead>
+                    <tr style="border-bottom: 1px solid var(--border-subtle); color: var(--text-muted); background: rgba(15,23,42,0.3);">
+                        <th style="padding: 12px 20px;">Timestamp</th>
+                        <th style="padding: 12px 20px;">Program Title</th>
+                        <th style="padding: 12px 20px;">Bugs Found</th>
+                        <th style="padding: 12px 20px;">Analysis Engine</th>
+                        <th style="padding: 12px 20px;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in stats.recent_analyses %}
+                    <tr style="border-bottom: 1px solid var(--border-subtle);">
+                        <td style="padding: 12px 20px; color: var(--text-secondary);">{{ item.timestamp }}</td>
+                        <td style="padding: 12px 20px; font-weight: 600; color: #fff;">{{ item.program_title }}</td>
+                        <td style="padding: 12px 20px;">
+                            <span class="badge {% if item.bugs_found > 0 %}badge-amber{% else %}badge-emerald{% endif %}">
+                                {{ item.bugs_found }} Issue{% if item.bugs_found != 1 %}s{% endif %}
+                            </span>
+                        </td>
+                        <td style="padding: 12px 20px; color: var(--primary-cyan);">{{ item.analysis_mode }}</td>
+                        <td style="padding: 12px 20px;">
+                            <a href="{{ url_for('editor') }}" class="btn btn-outline btn-sm">Load</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div style="padding: 32px; text-align: center; color: var(--text-secondary); font-size: 14px;">
+            <i class="fas fa-inbox" style="font-size: 32px; color: var(--text-muted); margin-bottom: 10px; display: block;"></i>
+            No code analyses recorded yet. Start by analyzing a C program in the Editor or AI Bug Analyzer!
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block head_extra %}
+<!-- Monaco Editor Loader from CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/loader.js"></script>
+<script>
+    window.initialCodeData = {{ initial_code | tojson | safe }};
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="editor-workspace">
+    <!-- Left Pane: Editor & Controls -->
+    <div class="editor-pane">
+        <!-- Toolbar -->
+        <div class="pane-toolbar">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <label for="sampleProgramSelect" style="font-size: 13px; font-weight: 500; color: var(--text-secondary);">
+                    <i class="fas fa-folder-open"></i> Sample:
+                </label>
+                <select id="sampleProgramSelect" class="form-select" style="max-width: 260px;">
+                    <option value="">-- Choose Buggy Program (15) --</option>
+                    {% for p in programs %}
+                    <option value="{{ p.id }}">{{ p.id }}. {{ p.title }} ({{ p.difficulty }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <button type="button" id="resetCodeBtn" class="btn btn-outline btn-sm" title="Reset Code">
+                    <i class="fas fa-undo"></i> Reset
+                </button>
+                <button type="button" id="clearCodeBtn" class="btn btn-outline btn-sm" title="Clear Editor">
+                    <i class="fas fa-trash-alt"></i> Clear
+                </button>
+                <button type="button" id="analyzeCodeBtn" class="btn btn-secondary btn-sm" title="Send to AI Analyzer">
+                    <i class="fas fa-microscope"></i> AI Analyze
+                </button>
+                <button type="button" id="compileRunBtn" class="btn btn-primary btn-sm">
+                    <i class="fas fa-play"></i> Compile & Run
+                </button>
+            </div>
+        </div>
+
+        <!-- Monaco Editor Container -->
+        <div id="monacoEditorContainer" class="monaco-container"></div>
+        <!-- Fallback Textarea if Monaco CDN is blocked or unavailable -->
+        <textarea id="fallbackCodeArea" class="fallback-editor" spellcheck="false" placeholder="// Write C code here..."></textarea>
+
+        <!-- Stdin Drawer for user input -->
+        <div style="padding: 10px 16px; background: rgba(11, 17, 32, 0.8); border-top: 1px solid var(--border-subtle); display: flex; align-items: center; gap: 10px;">
+            <label for="stdinInputField" style="font-size: 12px; color: var(--text-muted); white-space: nowrap;">
+                <i class="fas fa-keyboard"></i> Standard Input (stdin):
+            </label>
+            <input type="text" id="stdinInputField" class="form-input" style="flex: 1; padding: 4px 10px; font-size: 12.5px;" placeholder="Input provided to scanf() (e.g. 19 or 45)">
+        </div>
+    </div>
+
+    <!-- Right Pane: Output, Compiler Diagnostics, and Details -->
+    <div class="output-pane">
+        <div class="pane-toolbar">
+            <div class="output-tabs">
+                <button type="button" class="output-tab-btn active" data-tab="output">
+                    <i class="fas fa-terminal"></i> Output
+                </button>
+                <button type="button" class="output-tab-btn" data-tab="diagnostics">
+                    <i class="fas fa-exclamation-triangle"></i> Diagnostics
+                </button>
+                <button type="button" class="output-tab-btn" data-tab="details">
+                    <i class="fas fa-info-circle"></i> Execution Details
+                </button>
+            </div>
+
+            <div style="font-size: 11.5px; color: var(--text-muted);">
+                <i class="fas fa-lock"></i> Isolated Sandbox
+            </div>
+        </div>
+
+        <!-- Output Tab Panel -->
+        <div class="output-content-area output-tab-panel" id="panel_output">
+            <div class="terminal-header">Program Output Console</div>
+            <pre id="outputConsole" style="font-family: var(--font-mono); font-size: 13px; line-height: 1.5; color: #f8fafc;">Ready. Type or load C code and click "Compile & Run".</pre>
+        </div>
+
+        <!-- Compiler Diagnostics Tab Panel -->
+        <div class="output-content-area output-tab-panel" id="panel_diagnostics" style="display: none;">
+            <div class="terminal-header">GCC Compiler Diagnostics (-Wall -Wextra -std=c11)</div>
+            <pre id="diagnosticsConsole" style="font-family: var(--font-mono); font-size: 12.5px; line-height: 1.5; color: #cbd5e1;">No compiler diagnostics generated yet.</pre>
+        </div>
+
+        <!-- Execution Details Tab Panel -->
+        <div class="output-content-area output-tab-panel" id="panel_details" style="display: none;">
+            <div class="terminal-header">Process & Sandbox Telemetry</div>
+            <div id="execDetailsConsole" style="font-size: 13px; color: #cbd5e1;">
+                Execution telemetry will be displayed after a compile/run cycle.
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts_extra %}
+<script src="{{ url_for('static', filename='js/editor.js') }}"></script>
+{% endblock %}

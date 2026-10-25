@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="margin-bottom: 24px;">
+    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; margin-bottom: 16px;">
+        <div>
+            <h2 style="font-size: 22px; font-weight: 700; color: #fff;">Interactive C Debugging Checklist</h2>
+            <p style="color: var(--text-secondary); font-size: 14px;">
+                Follow this systematic 12-point inspection before seeking help or submitting your C assignments.
+            </p>
+        </div>
+        <div style="display: flex; gap: 8px;">
+            <button type="button" class="btn btn-outline btn-sm checklist-filter-btn active" data-filter="all">All Items</button>
+            <button type="button" class="btn btn-outline btn-sm checklist-filter-btn" data-filter="pending">Pending</button>
+            <button type="button" class="btn btn-outline btn-sm checklist-filter-btn" data-filter="completed">Completed</button>
+        </div>
+    </div>
+
+    <!-- Progress Card -->
+    <div class="card" style="padding: 20px; border-color: rgba(56, 189, 248, 0.25);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <div>
+                <span style="font-size: 14px; font-weight: 600; color: #fff;">Checklist Progress:</span>
+                <span id="checklistCompletedCount" style="color: var(--primary-cyan); font-weight: 700; margin-left: 6px;">
+                    {{ completed_count }} of {{ total_count }}
+                </span>
+            </div>
+            <div id="checklistPercentageText" style="font-size: 16px; font-weight: 700; color: var(--primary-cyan);">
+                {{ percentage }}%
+            </div>
+        </div>
+        <div class="progress-bar-track">
+            <div class="progress-bar-fill" id="checklistProgressBar" style="width: {{ percentage }}%;"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Checklist Items List -->
+<div class="card" style="padding: 0; overflow: hidden;">
+    {% for item in items %}
+    <div class="checklist-item" id="item_wrapper_{{ item.id }}">
+        <input type="checkbox" class="checklist-checkbox" id="cb_{{ item.id }}" data-item-id="{{ item.id }}" {% if item.completed %}checked{% endif %}>
+        <div class="checklist-text">
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px;">
+                <label for="cb_{{ item.id }}" class="checklist-title" style="cursor: pointer; margin: 0;">
+                    <i class="{{ item.icon }}" style="color: var(--primary-cyan); width: 16px;"></i> {{ item.title }}
+                </label>
+                <span class="badge badge-cyan" style="font-size: 11px;">{{ item.category }}</span>
+            </div>
+            <div class="checklist-desc">{{ item.description }}</div>
+            <div class="checklist-tip"><i class="fas fa-lightbulb"></i> Tip: {{ item.tip }}</div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
+
+{% block scripts_extra %}
+<script src="{{ url_for('static', filename='js/checklist.js') }}"></script>
+{% endblock %}

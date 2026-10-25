@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="margin-bottom: 24px;">
+    <h2 style="font-size: 22px; font-weight: 700; color: #fff;">AI Prompt Library for C Programming</h2>
+    <p style="color: var(--text-secondary); font-size: 14px;">
+        Curated collection of reusable, pedagogy-aligned system prompts designed to guide students without prematurely solving problems.
+    </p>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 24px;">
+    {% for p in prompts %}
+    <div class="card" style="margin-bottom: 0;">
+        <div class="card-header">
+            <div class="card-title">
+                <i class="fas fa-terminal" style="color: var(--primary-cyan);"></i>
+                <span>{{ p.title }}</span>
+            </div>
+            <div style="display: flex; gap: 8px;">
+                <span class="badge badge-cyan">{{ p.category }}</span>
+                <button type="button" class="btn btn-outline btn-sm copy-prompt-btn" data-target="prompt_text_{{ p.id }}">
+                    <i class="fas fa-copy"></i> Copy Prompt
+                </button>
+            </div>
+        </div>
+        <div class="card-body">
+            <p style="font-size: 13.5px; color: var(--text-secondary); margin-bottom: 12px;">
+                {{ p.description }}
+            </p>
+            <div style="position: relative;">
+                <pre style="background: #080d1a; padding: 16px; border-radius: 8px; font-family: var(--font-mono); font-size: 12.5px; color: #93c5fd; overflow-x: auto; border: 1px solid var(--border-subtle); line-height: 1.5; white-space: pre-wrap;"><code id="prompt_text_{{ p.id }}">{{ p.template }}</code></pre>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
+
+{% block scripts_extra %}
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const copyBtns = document.querySelectorAll(".copy-prompt-btn");
+        copyBtns.forEach(btn => {
+            btn.addEventListener("click", () => {
+                const targetId = btn.dataset.target;
+                const textEl = document.getElementById(targetId);
+                if (textEl) {
+                    navigator.clipboard.writeText(textEl.textContent.trim())
+                        .then(() => {
+                            showToast("Prompt copied to clipboard!", "success");
+                            const original = btn.innerHTML;
+                            btn.innerHTML = `<i class="fas fa-check"></i> Copied!`;
+                            setTimeout(() => btn.innerHTML = original, 2000);
+                        })
+                        .catch(() => showToast("Failed to copy prompt", "error"));
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

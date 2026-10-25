@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="margin-bottom: 24px;">
+    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; margin-bottom: 16px;">
+        <div>
+            <h2 style="font-size: 22px; font-weight: 700; color: #fff;">AI Bug Analyzer & Hint-First Tutoring</h2>
+            <p style="color: var(--text-secondary); font-size: 14px;">
+                Analyze your C code to detect syntax errors, pointer bugs, boundary mistakes, and memory leaks.
+            </p>
+        </div>
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <label for="analyzerProgramSelect" style="font-size: 13px; color: var(--text-muted);"><i class="fas fa-folder"></i> Load Program:</label>
+            <select id="analyzerProgramSelect" class="form-select" style="max-width: 260px;">
+                <option value="">-- Choose from 15 Programs --</option>
+                {% for p in programs %}
+                <option value="{{ p.id }}">{{ p.id }}. {{ p.title }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+
+    <!-- Code Input Card -->
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title">
+                <i class="fas fa-code"></i> C Code to Analyze
+            </div>
+            <button type="button" id="runAnalyzerBtn" class="btn btn-primary btn-sm">
+                <i class="fas fa-search"></i> Run AI Analysis
+            </button>
+        </div>
+        <div class="card-body" style="padding: 16px;">
+            <textarea id="analyzerCodeInput" class="form-textarea" style="width: 100%; min-height: 200px; font-family: var(--font-mono); font-size: 13.5px; background: #080d1a; color: #f8fafc; border: 1px solid var(--border-subtle); line-height: 1.5; border-radius: var(--radius-sm);" placeholder="// Paste or type C code here to inspect for bugs..."></textarea>
+        </div>
+    </div>
+</div>
+
+<!-- Analysis Results Container -->
+<div id="analysisResultsContainer">
+    <div class="card" style="padding: 40px; text-align: center; border-style: dashed;">
+        <i class="fas fa-microscope" style="font-size: 40px; color: var(--text-muted); margin-bottom: 14px;"></i>
+        <h3 style="color: #fff; font-size: 16px; margin-bottom: 6px;">Ready to Analyze C Code</h3>
+        <p style="color: var(--text-secondary); font-size: 13.5px; max-width: 500px; margin: 0 auto 18px;">
+            Click <strong>"Run AI Analysis"</strong> above to inspect your code, or select a buggy program from the dropdown.
+        </p>
+    </div>
+</div>
+
+<!-- Tutor Quality Rating Form (1-5 Star Scale) -->
+<div class="card" id="ratingSection" style="display: none; margin-top: 24px; border-color: rgba(56, 189, 248, 0.25);">
+    <div class="card-header">
+        <div class="card-title">
+            <i class="fas fa-star" style="color: #f59e0b;"></i> Tutor Quality Feedback Rating
+        </div>
+        <span style="font-size: 12px; color: var(--text-muted);">Stored in SQLite for Quality Assurance</span>
+    </div>
+    <div class="card-body">
+        <p style="font-size: 13.5px; color: var(--text-secondary); margin-bottom: 20px;">
+            Help us improve the AI C Tutor by rating the quality, hint usefulness, and correctness of this analysis:
+        </p>
+        <form id="tutorRatingForm">
+            <div class="grid-4" style="margin-bottom: 20px;">
+                <!-- Clarity -->
+                <div style="background: rgba(15,23,42,0.6); padding: 14px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
+                    <div style="font-size: 13px; font-weight: 600; color: #fff; margin-bottom: 8px;">1. Explanation Clarity</div>
+                    <div style="display: flex; gap: 8px;">
+                        {% for i in range(1, 6) %}
+                        <label style="font-size: 12px; color: var(--text-secondary); cursor: pointer;">
+                            <input type="radio" name="clarity" value="{{ i }}" {% if i == 5 %}checked{% endif %}> {{ i }}★
+                        </label>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Hint Usefulness -->
+                <div style="background: rgba(15,23,42,0.6); padding: 14px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
+                    <div style="font-size: 13px; font-weight: 600; color: #fff; margin-bottom: 8px;">2. Hint Usefulness</div>
+                    <div style="display: flex; gap: 8px;">
+                        {% for i in range(1, 6) %}
+                        <label style="font-size: 12px; color: var(--text-secondary); cursor: pointer;">
+                            <input type="radio" name="usefulness" value="{{ i }}" {% if i == 5 %}checked{% endif %}> {{ i }}★
+                        </label>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Bug Accuracy -->
+                <div style="background: rgba(15,23,42,0.6); padding: 14px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
+                    <div style="font-size: 13px; font-weight: 600; color: #fff; margin-bottom: 8px;">3. Bug Identification</div>
+                    <div style="display: flex; gap: 8px;">
+                        {% for i in range(1, 6) %}
+                        <label style="font-size: 12px; color: var(--text-secondary); cursor: pointer;">
+                            <input type="radio" name="accuracy" value="{{ i }}" {% if i == 5 %}checked{% endif %}> {{ i }}★
+                        </label>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Fix Correctness -->
+                <div style="background: rgba(15,23,42,0.6); padding: 14px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
+                    <div style="font-size: 13px; font-weight: 600; color: #fff; margin-bottom: 8px;">4. Suggested Fix</div>
+                    <div style="display: flex; gap: 8px;">
+                        {% for i in range(1, 6) %}
+                        <label style="font-size: 12px; color: var(--text-secondary); cursor: pointer;">
+                            <input type="radio" name="fix" value="{{ i }}" {% if i == 5 %}checked{% endif %}> {{ i }}★
+                        </label>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 12px; align-items: center;">
+                <input type="text" id="ratingComments" class="form-input" style="flex: 1;" placeholder="Optional feedback or notes on this tutoring session...">
+                <button type="submit" id="submitRatingBtn" class="btn btn-primary">
+                    <i class="fas fa-paper-plane"></i> Submit Feedback
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts_extra %}
+<script src="{{ url_for('static', filename='js/analyzer.js') }}"></script>
+{% endblock %}

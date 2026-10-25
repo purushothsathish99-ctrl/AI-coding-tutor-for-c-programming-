@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="margin-bottom: 24px;">
+    <h2 style="font-size: 22px; font-weight: 700; color: #fff;">C Programming Concept Quiz (12 Questions)</h2>
+    <p style="color: var(--text-secondary); font-size: 14px;">
+        Evaluate your understanding of C syntax, conditions, loops, pointer dereferencing, zero-based indexing, and memory safety.
+    </p>
+</div>
+
+<!-- Active Quiz Form Container -->
+<div id="quizFormContainer">
+    <form id="quizForm">
+        <!-- Student Info Header -->
+        <div class="card" style="margin-bottom: 20px;">
+            <div class="card-body" style="padding: 18px 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <label for="studentNameInput" style="font-size: 13.5px; font-weight: 600; color: #fff;">Student Name:</label>
+                    <input type="text" id="studentNameInput" class="form-input" placeholder="e.g. Alex Chen" style="width: 220px;" value="First-Year CSE Student">
+                </div>
+                <div style="font-size: 13px; color: var(--text-muted);">
+                    <i class="fas fa-clock"></i> 12 Questions &bull; Immediate Scoring &bull; Explanations Included
+                </div>
+            </div>
+        </div>
+
+        <!-- 12 Multiple Choice Questions -->
+        <div style="display: flex; flex-direction: column; gap: 20px;">
+            {% for q in questions %}
+            <div class="card quiz-question-card" style="margin-bottom: 0;">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span style="color: var(--primary-cyan); font-weight: 700;">Q{{ q.id }}.</span>
+                        <span>{{ q.question }}</span>
+                    </div>
+                    <span class="badge badge-cyan">{{ q.category }}</span>
+                </div>
+                <div class="card-body">
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        {% for opt in q.options %}
+                        <label style="display: flex; align-items: center; gap: 12px; padding: 10px 14px; background: rgba(15,23,42,0.6); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); cursor: pointer; transition: all var(--transition-fast);">
+                            <input type="radio" name="q_{{ q.id }}" value="{{ loop.index0 }}" style="accent-color: var(--primary-cyan); width: 18px; height: 18px;">
+                            <span style="font-size: 14px; color: #f1f5f9;">{{ opt }}</span>
+                        </label>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div style="margin-top: 28px; text-align: center;">
+            <button type="submit" id="submitQuizBtn" class="btn btn-primary" style="padding: 14px 36px; font-size: 16px;">
+                <i class="fas fa-paper-plane"></i> Submit Answers for Grading
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- Results & Detailed Explanations View -->
+<div id="quizResultsView" style="display: none;">
+    <div class="card" style="border-color: var(--border-glow); text-align: center; padding: 36px 24px; margin-bottom: 24px;">
+        <div style="font-size: 50px; color: var(--primary-cyan); margin-bottom: 12px;">
+            <i class="fas fa-award"></i>
+        </div>
+        <h2 style="font-size: 26px; font-weight: 800; color: #fff; margin-bottom: 6px;">Quiz Results Summary</h2>
+        <p style="color: var(--text-secondary); margin-bottom: 18px;">Here is your performance breakdown on the C programming concepts:</p>
+
+        <div style="display: flex; justify-content: center; gap: 32px; margin-bottom: 20px;">
+            <div>
+                <div id="resScore" style="font-size: 32px; font-weight: 800; color: #fff;">0 / 12</div>
+                <div style="font-size: 12.5px; color: var(--text-muted); text-transform: uppercase;">Raw Score</div>
+            </div>
+            <div>
+                <div id="resPercentage" style="font-size: 32px; font-weight: 800; color: var(--primary-cyan);">0%</div>
+                <div style="font-size: 12.5px; color: var(--text-muted); text-transform: uppercase;">Percentage</div>
+            </div>
+        </div>
+
+        <div style="margin-bottom: 24px;">
+            <span id="resGradeBadge" class="badge badge-emerald" style="font-size: 14px; padding: 6px 16px;">Mastery Achieved</span>
+        </div>
+
+        <div>
+            <button type="button" id="retakeQuizBtn" class="btn btn-outline">
+                <i class="fas fa-redo"></i> Retake Quiz
+            </button>
+        </div>
+    </div>
+
+    <!-- Answers Breakdown List -->
+    <h3 style="font-size: 18px; color: #fff; margin-bottom: 16px;">Detailed Concept Breakdown & Answer Explanations:</h3>
+    <div id="answersBreakdownList"></div>
+</div>
+
+<!-- Past Quiz Attempts History -->
+{% if history %}
+<div class="card" style="margin-top: 36px;">
+    <div class="card-header">
+        <div class="card-title">
+            <i class="fas fa-history"></i> Past Quiz Attempts
+        </div>
+    </div>
+    <div class="card-body" style="padding: 0;">
+        <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 13px;">
+                <thead>
+                    <tr style="border-bottom: 1px solid var(--border-subtle); color: var(--text-muted); background: rgba(15,23,42,0.3);">
+                        <th style="padding: 12px 20px;">Date & Time</th>
+                        <th style="padding: 12px 20px;">Student</th>
+                        <th style="padding: 12px 20px;">Score</th>
+                        <th style="padding: 12px 20px;">Percentage</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for h in history %}
+                    <tr style="border-bottom: 1px solid var(--border-subtle);">
+                        <td style="padding: 12px 20px; color: var(--text-secondary);">{{ h.completed_at }}</td>
+                        <td style="padding: 12px 20px; font-weight: 600; color: #fff;">{{ h.student_name }}</td>
+                        <td style="padding: 12px 20px;">{{ h.score }} / {{ h.total_questions }}</td>
+                        <td style="padding: 12px 20px;">
+                            <span class="badge {% if h.percentage >= 80 %}badge-emerald{% elif h.percentage >= 50 %}badge-cyan{% else %}badge-rose{% endif %}">
+                                {{ h.percentage }}%
+                            </span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts_extra %}
+<script src="{{ url_for('static', filename='js/quiz.js') }}"></script>
+{% endblock %}

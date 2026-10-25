@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page_title }} | AI Coding Tutor for C</title>
+    
+    <!-- Google Fonts: Inter & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Main Design System CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    
+    {% block head_extra %}{% endblock %}
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="app-sidebar" id="appSidebar">
+            <div class="sidebar-brand">
+                <div class="brand-icon">
+                    <i class="fas fa-terminal"></i>
+                </div>
+                <div>
+                    <div class="brand-title">AI C Tutor</div>
+                    <div class="brand-subtitle">CSE Learning Lab</div>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section-title">Core Modules</div>
+                <a href="{{ url_for('index') }}" class="nav-item {% if request.path == '/' %}active{% endif %}">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="{{ url_for('editor') }}" class="nav-item {% if request.path == '/editor' %}active{% endif %}">
+                    <i class="fas fa-code"></i>
+                    <span>C Code Editor</span>
+                    <span class="nav-badge">GCC</span>
+                </a>
+                <a href="{{ url_for('analyzer') }}" class="nav-item {% if request.path == '/analyzer' %}active{% endif %}">
+                    <i class="fas fa-microscope"></i>
+                    <span>AI Bug Analyzer</span>
+                    <span class="nav-badge">Hints</span>
+                </a>
+                <a href="{{ url_for('library') }}" class="nav-item {% if request.path == '/library' %}active{% endif %}">
+                    <i class="fas fa-book-dead"></i>
+                    <span>Buggy Programs</span>
+                    <span class="nav-badge">15</span>
+                </a>
+                <a href="{{ url_for('chat') }}" class="nav-item {% if request.path == '/chat' %}active{% endif %}">
+                    <i class="fas fa-robot"></i>
+                    <span>AI Tutor Chat</span>
+                </a>
+
+                <div class="nav-section-title">Learning & Practice</div>
+                <a href="{{ url_for('checklist') }}" class="nav-item {% if request.path == '/checklist' %}active{% endif %}">
+                    <i class="fas fa-tasks"></i>
+                    <span>Debugging Checklist</span>
+                </a>
+                <a href="{{ url_for('mistakes') }}" class="nav-item {% if request.path == '/mistakes' %}active{% endif %}">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span>Common Mistakes</span>
+                    <span class="nav-badge">10</span>
+                </a>
+                <a href="{{ url_for('quiz') }}" class="nav-item {% if request.path == '/quiz' %}active{% endif %}">
+                    <i class="fas fa-question-circle"></i>
+                    <span>C Concept Quiz</span>
+                    <span class="nav-badge">12 Qs</span>
+                </a>
+                <a href="{{ url_for('progress') }}" class="nav-item {% if request.path == '/progress' %}active{% endif %}">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Learning Progress</span>
+                </a>
+
+                <div class="nav-section-title">Documentation</div>
+                <a href="{{ url_for('prompts') }}" class="nav-item {% if request.path == '/prompts' %}active{% endif %}">
+                    <i class="fas fa-comment-dots"></i>
+                    <span>Prompt Library</span>
+                </a>
+                <a href="{{ url_for('docs') }}" class="nav-item {% if request.path == '/docs' %}active{% endif %}">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Research & Docs</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="compiler-status-pill">
+                    <div class="status-dot inactive" id="compilerStatusDot"></div>
+                    <span id="compilerStatusText" style="color: var(--text-secondary); font-size: 11.5px;">Checking GCC...</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Wrapper -->
+        <main class="app-main">
+            <!-- Top Header -->
+            <header class="top-header">
+                <div class="header-left">
+                    <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle navigation">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div class="header-title">
+                        {% block header_title %}{{ page_title }}{% endblock %}
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <a href="{{ url_for('editor') }}" class="btn btn-primary btn-sm">
+                        <i class="fas fa-play"></i> Code Now
+                    </a>
+                </div>
+            </header>
+
+            <!-- Page Body -->
+            <div class="content-area">
+                {% block content %}{% endblock %}
+            </div>
+        </main>
+    </div>
+
+    <!-- Toast Notifications Container -->
+    <div id="toast-container"></div>
+
+    <!-- Global Scripts -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block scripts_extra %}{% endblock %}
+</body>
+</html>

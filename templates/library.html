@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="margin-bottom: 24px;">
+    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; margin-bottom: 16px;">
+        <div>
+            <h2 style="font-size: 22px; font-weight: 700; color: #fff;">Buggy C Program Library (15 Curated Programs)</h2>
+            <p style="color: var(--text-secondary); font-size: 14px;">
+                Carefully crafted beginner programs representing genuine first-year CSE bugs. Inspect the flaws, study the hints, and test the solutions.
+            </p>
+        </div>
+        <div style="display: flex; gap: 10px;">
+            <input type="text" id="librarySearchInput" class="form-input" placeholder="Search bugs or concepts..." style="width: 240px;">
+        </div>
+    </div>
+
+    <!-- Category Filter Chips -->
+    <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px;" id="categoryFilterContainer">
+        <button type="button" class="btn btn-outline btn-sm active-filter" data-cat="all">All Programs (15)</button>
+        {% for cat in categories %}
+        <button type="button" class="btn btn-outline btn-sm" data-cat="{{ cat }}">{{ cat }}</button>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Programs Grid -->
+<div class="grid-2" id="programCardsGrid">
+    {% for p in programs %}
+    <div class="card program-card" data-category="{{ p.category }}" data-title="{{ p.title | lower }}" style="margin-bottom: 0;">
+        <div class="card-header">
+            <div class="card-title">
+                <span style="color: var(--primary-cyan); font-weight: 700;">#{{ p.id }}</span>
+                <span>{{ p.title }}</span>
+            </div>
+            <div style="display: flex; gap: 6px;">
+                <span class="badge {% if p.difficulty == 'Beginner' %}badge-cyan{% else %}badge-amber{% endif %}">{{ p.difficulty }}</span>
+                <span class="badge badge-rose">{{ p.category }}</span>
+            </div>
+        </div>
+        <div class="card-body">
+            <p style="font-size: 13.5px; color: var(--text-secondary); margin-bottom: 14px; min-height: 40px;">
+                {{ p.simple_explanation }}
+            </p>
+
+            <div style="margin-bottom: 14px;">
+                <div style="display: flex; justify-content: space-between; font-size: 11px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px;">
+                    <span>Buggy Source:</span>
+                    <span style="color: var(--danger);">Line {{ p.line_number }}</span>
+                </div>
+                <pre style="background: #080d1a; padding: 12px; border-radius: 6px; font-family: var(--font-mono); font-size: 12px; max-height: 140px; overflow-y: auto; color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.2);"><code>{{ p.buggy_code }}</code></pre>
+            </div>
+
+            <!-- Expandable Details Toggle -->
+            <details style="margin-bottom: 16px; background: rgba(15, 23, 42, 0.5); padding: 10px; border-radius: 6px; border: 1px solid var(--border-subtle);">
+                <summary style="font-size: 12.5px; font-weight: 600; color: var(--primary-cyan); cursor: pointer;">
+                    <i class="fas fa-eye"></i> View Hints, Fix & Sample I/O
+                </summary>
+                <div style="margin-top: 12px; font-size: 13px; line-height: 1.5;">
+                    <div style="margin-bottom: 10px;">
+                        <strong style="color: #fff;">Level 1 Hint:</strong>
+                        <p style="color: var(--text-secondary); margin-top: 2px;">{{ p.hints.level1 }}</p>
+                    </div>
+                    <div style="margin-bottom: 10px;">
+                        <strong style="color: #fff;">Corrected Code:</strong>
+                        <pre style="background: #080d1a; padding: 10px; border-radius: 6px; font-family: var(--font-mono); font-size: 11.5px; color: #86efac; border: 1px solid rgba(16, 185, 129, 0.2); margin-top: 4px;"><code>{{ p.clean_code }}</code></pre>
+                    </div>
+                    <div style="margin-bottom: 6px;">
+                        <strong style="color: #fff;">Expected Output:</strong>
+                        <pre style="font-family: var(--font-mono); font-size: 11.5px; color: #a5f3fc; background: #080d1a; padding: 6px 10px; border-radius: 4px; margin-top: 4px;">{{ p.sample_output }}</pre>
+                    </div>
+                    <div>
+                        <strong style="color: var(--success);"><i class="fas fa-lightbulb"></i> Takeaway:</strong>
+                        <span style="color: #d1fae5;">{{ p.learning_takeaway }}</span>
+                    </div>
+                </div>
+            </details>
+
+            <div style="display: flex; gap: 8px;">
+                <a href="{{ url_for('editor', load=p.id) }}" class="btn btn-primary btn-sm" style="flex: 1;">
+                    <i class="fas fa-terminal"></i> Open in Editor
+                </a>
+                <button type="button" class="btn btn-outline btn-sm" onclick="sendToAnalyzer({{ p.id }})">
+                    <i class="fas fa-microscope"></i> Analyze
+                </button>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
+
+{% block scripts_extra %}
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        // Search functionality
+        const searchInput = document.getElementById("librarySearchInput");
+        const cards = document.querySelectorAll(".program-card");
+
+        searchInput.addEventListener("input", (e) => {
+            const query = e.target.value.toLowerCase();
+            cards.forEach(card => {
+                const title = card.dataset.title;
+                const cat = card.dataset.category.toLowerCase();
+                if (title.includes(query) || cat.includes(query)) {
+                    card.style.display = "block";
+                } else {
+                    card.style.display = "none";
+                }
+            });
+        });
+
+        // Category filter buttons
+        const filterBtns = document.querySelectorAll("#categoryFilterContainer button");
+        filterBtns.forEach(btn => {
+            btn.addEventListener("click", () => {
+                filterBtns.forEach(b => b.classList.remove("active-filter", "btn-primary"));
+                btn.classList.add("btn-primary");
+
+                const selectedCat = btn.dataset.cat;
+                cards.forEach(card => {
+                    if (selectedCat === "all" || card.dataset.category === selectedCat) {
+                        card.style.display = "block";
+                    } else {
+                        card.style.display = "none";
+                    }
+                });
+            });
+        });
+    });
+
+    function sendToAnalyzer(progId) {
+        fetch(`/api/program/${progId}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === "success" && data.program) {
+                    sessionStorage.setItem("c_tutor_active_code", data.program.buggy_code);
+                    window.location.href = "/analyzer";
+                }
+            });
+    }
+</script>
+{% endblock %}

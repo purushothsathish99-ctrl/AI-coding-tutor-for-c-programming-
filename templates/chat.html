@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="margin-bottom: 20px;">
+    <h2 style="font-size: 22px; font-weight: 700; color: #fff;">AI Tutor Interactive Chat</h2>
+    <p style="color: var(--text-secondary); font-size: 14px;">
+        Ask questions in plain English about C syntax, pointers, segmentation faults, loops, or debugging strategies.
+    </p>
+</div>
+
+<div class="chat-window">
+    <!-- Messages Scrollable Area -->
+    <div class="chat-messages" id="chatMessages">
+        <div class="chat-bubble bot">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                <span class="badge badge-cyan"><i class="fas fa-robot"></i> AI C Tutor</span>
+                <span style="font-size: 11px; color: var(--text-muted);">Ready to help</span>
+            </div>
+            <p>
+                Hello! Welcome to your interactive C programming tutoring session. I'm here to help you learn debugging and problem solving step-by-step.
+            </p>
+            <p style="margin-top: 8px;">
+                You can ask me to explain a concept, analyze why an error occurs, give progressive hints, or generate practice exercises. Click any of the prompt suggestions below or type your own question!
+            </p>
+        </div>
+    </div>
+
+    <!-- Quick Starter Prompt Chips -->
+    <div class="quick-prompts-bar">
+        <button type="button" class="prompt-chip"><i class="fas fa-magic"></i> Explain pointers in simple English</button>
+        <button type="button" class="prompt-chip"><i class="fas fa-search"></i> What does this code do?</button>
+        <button type="button" class="prompt-chip"><i class="fas fa-exclamation-triangle"></i> Why is this error occurring?</button>
+        <button type="button" class="prompt-chip"><i class="fas fa-lightbulb"></i> Can you give me another hint?</button>
+        <button type="button" class="prompt-chip"><i class="fas fa-dumbbell"></i> Give me a similar practice problem</button>
+        <button type="button" class="prompt-chip"><i class="fas fa-rocket"></i> How can I improve this program?</button>
+    </div>
+
+    <!-- Chat Input Form -->
+    <div class="chat-input-row">
+        <input type="text" id="chatInputField" class="form-input" style="flex: 1; padding: 12px 16px; font-size: 14px;" placeholder="Ask your C tutor a question (e.g. 'Why did my array index cause undefined behavior?')...">
+        <button type="button" id="sendChatBtn" class="btn btn-primary" style="padding: 12px 24px;">
+            <i class="fas fa-paper-plane"></i> Send
+        </button>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts_extra %}
+<script src="{{ url_for('static', filename='js/chat.js') }}"></script>
+{% endblock %}

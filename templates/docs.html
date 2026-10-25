@@ -1,0 +1,199 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="margin-bottom: 24px;">
+    <h2 style="font-size: 24px; font-weight: 800; color: #fff;">Academic Research, Architecture & Project Documentation</h2>
+    <p style="color: var(--text-secondary); font-size: 14px;">
+        Formal academic specification, security isolation analysis, and pedagogical framework for the AI Coding Tutor for C Programming.
+    </p>
+</div>
+
+<!-- Table of Contents -->
+<div class="card" style="margin-bottom: 24px; background: rgba(15, 23, 42, 0.4);">
+    <div class="card-body" style="padding: 16px 24px;">
+        <div style="font-size: 13px; font-weight: 700; color: var(--primary-cyan); text-transform: uppercase; margin-bottom: 8px;">
+            <i class="fas fa-bookmark"></i> Table of Contents
+        </div>
+        <div style="display: flex; flex-wrap: wrap; gap: 16px; font-size: 13px;">
+            <a href="#abstract" style="color: #cbd5e1; text-decoration: none;">1. Abstract</a>
+            <a href="#problem" style="color: #cbd5e1; text-decoration: none;">2. Problem Statement</a>
+            <a href="#objectives" style="color: #cbd5e1; text-decoration: none;">3. Objectives</a>
+            <a href="#comparative" style="color: #cbd5e1; text-decoration: none;">4. Existing vs Proposed</a>
+            <a href="#requirements" style="color: #cbd5e1; text-decoration: none;">5. Requirements (FR & NFR)</a>
+            <a href="#architecture" style="color: #cbd5e1; text-decoration: none;">6. System Architecture</a>
+            <a href="#database" style="color: #cbd5e1; text-decoration: none;">7. Database Schema</a>
+            <a href="#testing" style="color: #cbd5e1; text-decoration: none;">8. Testing Strategy</a>
+            <a href="#security" style="color: #cbd5e1; text-decoration: none;">9. Security & Sandbox Boundaries</a>
+            <a href="#ethics" style="color: #cbd5e1; text-decoration: none;">10. Ethical Use of AI</a>
+            <a href="#references" style="color: #cbd5e1; text-decoration: none;">11. Authoritative References</a>
+        </div>
+    </div>
+</div>
+
+<!-- Documentation Body -->
+<div style="display: flex; flex-direction: column; gap: 24px;">
+
+    <!-- 1. Abstract -->
+    <div class="card" id="abstract">
+        <div class="card-header">
+            <div class="card-title"><i class="fas fa-file-alt"></i> 1. Project Abstract</div>
+        </div>
+        <div class="card-body" style="line-height: 1.7; font-size: 14px; color: #cbd5e1;">
+            <p>
+                The <strong>AI Coding Tutor for C Programming</strong> is an intelligent educational platform tailored specifically for first-year Computer Science and Engineering (CSE) undergraduates. First-year students learning C frequently experience high cognitive friction with manual memory management, pointer dereferencing, buffer overflows, and cryptic compiler diagnostics. Conventional generative AI assistants typically bypass the learning process by immediately providing complete corrected solutions, fostering dependency and preventing students from developing mental models of program state and execution flow.
+            </p>
+            <p style="margin-top: 10px;">
+                This platform introduces a <strong>hint-first pedagogical paradigm</strong> featuring a 3-tier progressive hint disclosure mechanism (Subtle Nudge &rarr; Concept & Line Focus &rarr; Corrected Solution & Fix). It combines an intelligent static rule-based C analyzer, a GCC compiler interface with isolated temporary directory execution, interactive debugging checklists, 10 common beginner mistakes, and continuous tutor quality feedback logged to SQLite.
+            </p>
+        </div>
+    </div>
+
+    <!-- 2. Problem Statement -->
+    <div class="card" id="problem">
+        <div class="card-header">
+            <div class="card-title"><i class="fas fa-exclamation-circle"></i> 2. Problem Statement</div>
+        </div>
+        <div class="card-body" style="line-height: 1.7; font-size: 14px; color: #cbd5e1;">
+            <p>
+                Undergraduate C programming pedagogy faces two critical modern challenges:
+            </p>
+            <ul style="margin: 10px 0 10px 24px;">
+                <li><strong>Cryptic Diagnostic Barriers:</strong> Standard GCC output (e.g. <code>error: expected ';' before 'printf'</code> or silent Segmentation Faults from wild pointers) fails to explain <em>why</em> the bug occurred in terms accessible to beginners.</li>
+                <li><strong>Premature Answer Revelation:</strong> Existing Large Language Models (LLMs) solve programming problems unconditionally, eliminating the "productive struggle" necessary for students to master algorithmic debugging, invariant checks, and pointer mechanics.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- 3. System Architecture Diagram -->
+    <div class="card" id="architecture">
+        <div class="card-header">
+            <div class="card-title"><i class="fas fa-sitemap"></i> 6. System Architecture</div>
+        </div>
+        <div class="card-body">
+            <div style="background: #080d1a; padding: 24px; border-radius: 8px; border: 1px solid var(--border-subtle); font-family: var(--font-mono); font-size: 13px; line-height: 1.6; color: #38bdf8;">
+                <pre>
++-----------------------------------------------------------------------------------+
+|                            STUDENT WEB BROWSER                                    |
+|   Monaco C Editor  |  3-Tier Hint UI  |  Interactive Chat  |  Checklist & Quizzes |
++-----------------------------------------------------------------------------------+
+                                         |
+                                         | HTTP / JSON REST APIs
+                                         v
++-----------------------------------------------------------------------------------+
+|                        FLASK APPLICATION BACKEND (Python)                         |
+|                                                                                   |
+|  +--------------------+  +----------------------+  +--------------------------+   |
+|  |   Static Rule C    |  |     Safe Compiler    |  |   AI Tutor Chatbot &     |   |
+|  |   Bug Analyzer     |  |       Interface      |  |   Pedagogy Engine        |   |
+|  | (15 Bug Categories)|  | (GCC -Wall -std=c11) |  |   (Prompt Scaffolding)   |   |
+|  +--------------------+  +----------------------+  +--------------------------+   |
+|            |                         |                          |                 |
+|            |                         v                          |                 |
+|            |            +-------------------------+             |                 |
+|            |            |  Ephemeral Temp Sandbox |             |                 |
+|            |            | (Timeout & Memory Limit)|             |                 |
+|            |            +-------------------------+             |                 |
+|            +-------------------------+--------------------------+                 |
+|                                      v                                            |
+|                       +-----------------------------+                             |
+|                       |  SQLite Relational Database |                             |
+|                       | (Ratings, Quizzes, History) |                             |
+|                       +-----------------------------+                             |
++-----------------------------------------------------------------------------------+
+                </pre>
+            </div>
+        </div>
+    </div>
+
+    <!-- 7. Database Schema -->
+    <div class="card" id="database">
+        <div class="card-header">
+            <div class="card-title"><i class="fas fa-database"></i> 7. Relational Database Schema</div>
+        </div>
+        <div class="card-body" style="padding: 0;">
+            <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 13px;">
+                <thead>
+                    <tr style="border-bottom: 1px solid var(--border-subtle); color: var(--text-muted); background: rgba(15,23,42,0.3);">
+                        <th style="padding: 12px 20px;">Table Name</th>
+                        <th style="padding: 12px 20px;">Key Columns</th>
+                        <th style="padding: 12px 20px;">Purpose & Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="border-bottom: 1px solid var(--border-subtle);">
+                        <td style="padding: 12px 20px; font-weight: 600; color: #fff;">analysis_history</td>
+                        <td style="padding: 12px 20px; color: var(--primary-cyan); font-family: var(--font-mono); font-size: 12px;">id, timestamp, code_snippet, bugs_found, bug_categories, analysis_mode, hints_unlocked</td>
+                        <td style="padding: 12px 20px; color: var(--text-secondary);">Stores every code inspection session and bug counts.</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid var(--border-subtle);">
+                        <td style="padding: 12px 20px; font-weight: 600; color: #fff;">tutor_ratings</td>
+                        <td style="padding: 12px 20px; color: var(--primary-cyan); font-family: var(--font-mono); font-size: 12px;">id, analysis_id, clarity_score, usefulness_score, accuracy_score, fix_score, feedback_comments</td>
+                        <td style="padding: 12px 20px; color: var(--text-secondary);">Captures 1–5 star student evaluations across 4 educational dimensions.</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid var(--border-subtle);">
+                        <td style="padding: 12px 20px; font-weight: 600; color: #fff;">quiz_attempts</td>
+                        <td style="padding: 12px 20px; color: var(--primary-cyan); font-family: var(--font-mono); font-size: 12px;">id, student_name, score, total_questions, percentage, answers_json, completed_at</td>
+                        <td style="padding: 12px 20px; color: var(--text-secondary);">Persists quiz performance records and student answers.</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid var(--border-subtle);">
+                        <td style="padding: 12px 20px; font-weight: 600; color: #fff;">checklist_progress</td>
+                        <td style="padding: 12px 20px; color: var(--primary-cyan); font-family: var(--font-mono); font-size: 12px;">item_id, is_completed, updated_at</td>
+                        <td style="padding: 12px 20px; color: var(--text-secondary);">Maintains student completion states for the 12-point debugging checklist.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 9. Security & Sandbox Boundaries -->
+    <div class="card" id="security">
+        <div class="card-header">
+            <div class="card-title"><i class="fas fa-shield-alt"></i> 9. Security & Sandbox Boundaries</div>
+        </div>
+        <div class="card-body" style="line-height: 1.7; font-size: 14px; color: #cbd5e1;">
+            <p>
+                Compiling and running untrusted student code requires strict security boundaries:
+            </p>
+            <ul style="margin: 10px 0 10px 24px;">
+                <li><strong>Ephemeral Temporary Directories:</strong> Every compilation executes in a uniquely generated OS temp directory (e.g., <code>tempfile.mkdtemp()</code>) which is guaranteed to be deleted in a <code>finally:</code> block.</li>
+                <li><strong>Process Execution Timeouts:</strong> A strict 3.0-second execution timeout is enforced via <code>subprocess.run(timeout=3.0)</code>. Runaway infinite loops or blocking inputs are terminated immediately.</li>
+                <li><strong>Output Buffer Capping:</strong> Terminal output is capped at 64 KB (65,536 bytes) to prevent memory exhaustion from runaway <code>printf</code> loops.</li>
+                <li><strong>Honest Dependency Transparency:</strong> If a native GCC compiler is not detected in the host environment, binary execution is cleanly prevented, and the platform transparently guides the user through installation rather than inventing fake execution outputs.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- 10. Ethical Use of AI -->
+    <div class="card" id="ethics">
+        <div class="card-header">
+            <div class="card-title"><i class="fas fa-balance-scale"></i> 10. Ethical Use of AI in Education</div>
+        </div>
+        <div class="card-body" style="line-height: 1.7; font-size: 14px; color: #cbd5e1;">
+            <p>
+                AI tutoring systems must be designed to augment human learning, not replace critical thinking:
+            </p>
+            <ul style="margin: 10px 0 10px 24px;">
+                <li><strong>Scaffolding over Direct Answers:</strong> Defaulting to Level 1 and Level 2 hints ensures students engage their problem-solving faculties.</li>
+                <li><strong>Academic Integrity:</strong> The tutor explains the principles of memory management and language syntax rather than encouraging blind copy-pasting.</li>
+                <li><strong>Privacy Preservation:</strong> All student code analysis and quiz attempts are stored in a private local SQLite database with zero tracking.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- 11. Authoritative References -->
+    <div class="card" id="references">
+        <div class="card-header">
+            <div class="card-title"><i class="fas fa-book"></i> 11. Authoritative References</div>
+        </div>
+        <div class="card-body" style="line-height: 1.8; font-size: 13.5px; color: #cbd5e1;">
+            <ol style="margin-left: 20px;">
+                <li><strong>GNU Compiler Collection (GCC) Documentation:</strong> Free Software Foundation, <em>GCC Command Options & Diagnostic Warnings (-Wall, -Wextra, -std=c11)</em>. Available at <a href="https://gcc.gnu.org/onlinedocs/" target="_blank" style="color: var(--primary-cyan);">gcc.gnu.org</a></li>
+                <li><strong>ISO/IEC 9899:2018 (C18 Standard):</strong> International Organization for Standardization, <em>Programming languages — C</em>.</li>
+                <li><strong>Kernighan, B. W., & Ritchie, D. M. (1988):</strong> <em>The C Programming Language (2nd ed.)</em>. Prentice Hall.</li>
+                <li><strong>Harvard University:</strong> <em>CS50: Introduction to Computer Science — Memory, Pointers, and Dynamic Allocation</em>.</li>
+            </ol>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

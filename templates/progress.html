@@ -1,0 +1,195 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="margin-bottom: 24px;">
+    <h2 style="font-size: 22px; font-weight: 700; color: #fff;">Student Learning Progress & Analytics</h2>
+    <p style="color: var(--text-secondary); font-size: 14px;">
+        Track programs analyzed, bugs detected, hints used, quiz milestones, and student satisfaction metrics.
+    </p>
+</div>
+
+<!-- Primary Stats Grid -->
+<div class="grid-4" style="margin-bottom: 24px;">
+    <div class="stat-card">
+        <div class="stat-icon cyan">
+            <i class="fas fa-file-code"></i>
+        </div>
+        <div>
+            <div class="stat-number">{{ stats.programs_analyzed }}</div>
+            <div class="stat-label">Programs Analyzed</div>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon emerald">
+            <i class="fas fa-bug"></i>
+        </div>
+        <div>
+            <div class="stat-number">{{ stats.bugs_identified }}</div>
+            <div class="stat-label">Bugs Identified</div>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon amber">
+            <i class="fas fa-lightbulb"></i>
+        </div>
+        <div>
+            <div class="stat-number">{{ stats.hints_unlocked }}</div>
+            <div class="stat-label">Hints Unlocked</div>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon purple">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <div>
+            <div class="stat-number">{{ stats.checklist_percentage }}%</div>
+            <div class="stat-label">Checklist Finished</div>
+        </div>
+    </div>
+</div>
+
+<div class="grid-2" style="margin-bottom: 24px;">
+    <!-- Tutor Quality Ratings Averages -->
+    <div class="card" style="margin-bottom: 0;">
+        <div class="card-header">
+            <div class="card-title">
+                <i class="fas fa-star" style="color: #f59e0b;"></i> Tutor Quality Ratings Summary
+            </div>
+            <span class="badge badge-amber">{{ ratings.total_ratings or 0 }} Reviews</span>
+        </div>
+        <div class="card-body">
+            {% if ratings.total_ratings %}
+            <div style="display: flex; flex-direction: column; gap: 14px;">
+                <div>
+                    <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px;">
+                        <span style="color: #fff;">Explanation Clarity</span>
+                        <span style="color: #f59e0b; font-weight: 700;">{{ "%.1f"|format(ratings.avg_clarity) }} / 5.0</span>
+                    </div>
+                    <div class="progress-bar-track">
+                        <div class="progress-bar-fill" style="width: {{ (ratings.avg_clarity / 5) * 100 }}%; background: #f59e0b;"></div>
+                    </div>
+                </div>
+
+                <div>
+                    <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px;">
+                        <span style="color: #fff;">Hint Usefulness</span>
+                        <span style="color: var(--primary-cyan); font-weight: 700;">{{ "%.1f"|format(ratings.avg_usefulness) }} / 5.0</span>
+                    </div>
+                    <div class="progress-bar-track">
+                        <div class="progress-bar-fill" style="width: {{ (ratings.avg_usefulness / 5) * 100 }}%;"></div>
+                    </div>
+                </div>
+
+                <div>
+                    <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px;">
+                        <span style="color: #fff;">Bug Identification Accuracy</span>
+                        <span style="color: var(--success); font-weight: 700;">{{ "%.1f"|format(ratings.avg_accuracy) }} / 5.0</span>
+                    </div>
+                    <div class="progress-bar-track">
+                        <div class="progress-bar-fill" style="width: {{ (ratings.avg_accuracy / 5) * 100 }}%; background: #10b981;"></div>
+                    </div>
+                </div>
+
+                <div>
+                    <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px;">
+                        <span style="color: #fff;">Suggested Fix Correctness</span>
+                        <span style="color: var(--accent-purple); font-weight: 700;">{{ "%.1f"|format(ratings.avg_fix) }} / 5.0</span>
+                    </div>
+                    <div class="progress-bar-track">
+                        <div class="progress-bar-fill" style="width: {{ (ratings.avg_fix / 5) * 100 }}%; background: #a855f7;"></div>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div style="padding: 24px; text-align: center; color: var(--text-secondary); font-size: 13.5px;">
+                No student ratings recorded yet. Rate an analysis session in the AI Bug Analyzer to build this metric!
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Quiz History -->
+    <div class="card" style="margin-bottom: 0;">
+        <div class="card-header">
+            <div class="card-title">
+                <i class="fas fa-poll"></i> Quiz Attempts & Scores
+            </div>
+            <a href="{{ url_for('quiz') }}" class="btn btn-outline btn-sm">Take Quiz</a>
+        </div>
+        <div class="card-body" style="padding: 0;">
+            {% if quiz_history %}
+            <div style="max-height: 260px; overflow-y: auto;">
+                <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 12.5px;">
+                    <thead>
+                        <tr style="border-bottom: 1px solid var(--border-subtle); color: var(--text-muted); background: rgba(15,23,42,0.3);">
+                            <th style="padding: 10px 16px;">Date</th>
+                            <th style="padding: 10px 16px;">Student</th>
+                            <th style="padding: 10px 16px;">Score</th>
+                            <th style="padding: 10px 16px;">Result</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for q in quiz_history %}
+                        <tr style="border-bottom: 1px solid var(--border-subtle);">
+                            <td style="padding: 10px 16px; color: var(--text-secondary);">{{ q.completed_at }}</td>
+                            <td style="padding: 10px 16px; color: #fff;">{{ q.student_name }}</td>
+                            <td style="padding: 10px 16px;">{{ q.score }} / {{ q.total_questions }}</td>
+                            <td style="padding: 10px 16px;">
+                                <span class="badge {% if q.percentage >= 80 %}badge-emerald{% elif q.percentage >= 50 %}badge-cyan{% else %}badge-rose{% endif %}">
+                                    {{ q.percentage }}%
+                                </span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div style="padding: 24px; text-align: center; color: var(--text-secondary); font-size: 13.5px;">
+                No quizzes attempted yet. Try the 12-question quiz to measure your conceptual mastery!
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Student Feedback Logs -->
+{% if recent_ratings %}
+<div class="card">
+    <div class="card-header">
+        <div class="card-title">
+            <i class="fas fa-comment-dots"></i> Recent Student Tutoring Feedback
+        </div>
+    </div>
+    <div class="card-body" style="padding: 0;">
+        <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 13px;">
+            <thead>
+                <tr style="border-bottom: 1px solid var(--border-subtle); color: var(--text-muted); background: rgba(15,23,42,0.3);">
+                    <th style="padding: 12px 20px;">Timestamp</th>
+                    <th style="padding: 12px 20px;">Clarity</th>
+                    <th style="padding: 12px 20px;">Hints</th>
+                    <th style="padding: 12px 20px;">Accuracy</th>
+                    <th style="padding: 12px 20px;">Fix</th>
+                    <th style="padding: 12px 20px;">Comments</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in recent_ratings %}
+                <tr style="border-bottom: 1px solid var(--border-subtle);">
+                    <td style="padding: 12px 20px; color: var(--text-secondary);">{{ r.created_at }}</td>
+                    <td style="padding: 12px 20px; color: #f59e0b;">{{ r.clarity_score }}★</td>
+                    <td style="padding: 12px 20px; color: var(--primary-cyan);">{{ r.usefulness_score }}★</td>
+                    <td style="padding: 12px 20px; color: var(--success);">{{ r.accuracy_score }}★</td>
+                    <td style="padding: 12px 20px; color: var(--accent-purple);">{{ r.fix_score }}★</td>
+                    <td style="padding: 12px 20px; color: #cbd5e1;">{{ r.feedback_comments or 'No written comments' }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
